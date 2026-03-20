@@ -15,7 +15,6 @@
       try {
         Telegram.WebApp.ready();
         Telegram.WebApp.expand();
-        if (Telegram.WebApp.requestFullscreen) Telegram.WebApp.requestFullscreen();
         var isDark = Telegram.WebApp.colorScheme === 'dark';
         var bg = isDark ? '#111110' : '#fdfdfc';
         Telegram.WebApp.setHeaderColor(bg);
@@ -621,6 +620,13 @@
     const KNOWN_FILES = new Set(ALL_FILES);
 
     function route() {
+      // Telegram Main Mini App puts launch params in the hash (#tgWebAppData=...);
+      // detect and strip them so they don't break our hash-based routing.
+      const rawHash = window.location.hash.slice(1);
+      if (rawHash && rawHash.indexOf('tgWebApp') !== -1) {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+
       // On first load, check ?file= and convert to #hash so navigation works
       const params = new URLSearchParams(window.location.search);
       const fromQuery = params.get('file');

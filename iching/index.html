@@ -605,13 +605,15 @@
 
     const tg = window.Telegram && Telegram.WebApp;
     if (tg) {
-      tg.ready();
-      tg.expand();
-      // Match header/background to our theme
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      const bg = isDark ? '#111110' : '#fdfdfc';
-      tg.setHeaderColor(bg);
-      tg.setBackgroundColor(bg);
+      try {
+        tg.ready();
+        tg.expand();
+        if (tg.requestFullscreen) tg.requestFullscreen();
+        const isDark = tg.colorScheme === 'dark';
+        const bg = isDark ? '#111110' : '#fdfdfc';
+        tg.setHeaderColor(bg);
+        tg.setBackgroundColor(bg);
+      } catch(e) { /* ignore WebApp API errors */ }
     }
 
     // ── Router ──
@@ -653,7 +655,9 @@
     }
 
     window.addEventListener('hashchange', route);
-    route();
+    try { route(); } catch(e) {
+      document.getElementById('loading').textContent = 'Error: ' + e.message;
+    }
   </script>
 </body>
 </html>

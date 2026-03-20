@@ -600,25 +600,35 @@
       }
     }
 
+    // ── Telegram WebApp integration ──
+
+    const tg = window.Telegram && Telegram.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand();
+      // Match header/background to our theme
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      const bg = isDark ? '#111110' : '#fdfdfc';
+      tg.setHeaderColor(bg);
+      tg.setBackgroundColor(bg);
+    }
+
     // ── Router ──
 
     let currentFile = null;
-
-    // Set of all known chapter files for distinguishing from in-page anchors
     const KNOWN_FILES = new Set(ALL_FILES);
 
-    function getFile() {
-      // Support ?file= (for Telegram WebApp) and #hash (for browsing)
+    function route() {
+      // On first load, check ?file= and convert to #hash so navigation works
       const params = new URLSearchParams(window.location.search);
       const fromQuery = params.get('file');
-      if (fromQuery) return fromQuery;
+      if (fromQuery) {
+        // Replace URL: remove ?file=, set #hash instead
+        history.replaceState(null, '', location.pathname + '#' + fromQuery);
+      }
 
       const hash = window.location.hash.slice(1);
-      return hash || null;
-    }
-
-    function route() {
-      const file = getFile();
+      const file = hash || null;
 
       if (!file) {
         currentFile = null;
@@ -626,7 +636,6 @@
         return;
       }
 
-      // If it's a known chapter file, load it
       if (KNOWN_FILES.has(file)) {
         if (file !== currentFile) {
           currentFile = file;
@@ -635,7 +644,7 @@
         return;
       }
 
-      // Otherwise it's an in-page anchor (footnote) — scroll to it
+      // In-page anchor (footnote)
       const el = document.getElementById(file);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth' });

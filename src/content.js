@@ -57,6 +57,40 @@ function extractIntro(content) {
 }
 
 /**
+ * Extract a section's oracle text (the blockquoted lines) between a ### header and the next ### header.
+ * @param {string} content - full markdown content
+ * @param {string} sectionName - e.g. "THE JUDGMENT" or "THE IMAGE"
+ * @returns {string|null} the oracle text (> lines), or null
+ */
+function extractSection(content, sectionName) {
+  const lines = content.split('\n');
+  const headerPattern = new RegExp(`^###\\s+${sectionName}`, 'i');
+
+  let startIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (headerPattern.test(lines[i])) {
+      startIdx = i + 1;
+      break;
+    }
+  }
+  if (startIdx === -1) return null;
+
+  // Collect blockquoted lines (> ...) until we hit non-quote content
+  const quoteLines = [];
+  for (let i = startIdx; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (line === '') continue;
+    if (line.startsWith('>')) {
+      quoteLines.push(line);
+    } else {
+      break;
+    }
+  }
+
+  return quoteLines.length > 0 ? quoteLines.join('\n') : null;
+}
+
+/**
  * Extract specific moving line text by position (1-based, bottom to top).
  * Looks for headers like:
  *   "#### Nine at the beginning means:"
@@ -180,4 +214,22 @@ function getMovingLineTexts(hexNumber, positions, lineValues) {
   return texts;
 }
 
-module.exports = { loadContent, getIntro, getTitle, getHexFilename, getComFilename, getMovingLineTexts };
+/**
+ * Get the Judgment oracle text for a hexagram.
+ */
+function getJudgment(hexNumber) {
+  const hex = hexFiles[hexNumber];
+  if (!hex) return null;
+  return extractSection(hex.content, 'THE JUDGMENT');
+}
+
+/**
+ * Get the Image oracle text for a hexagram.
+ */
+function getImage(hexNumber) {
+  const hex = hexFiles[hexNumber];
+  if (!hex) return null;
+  return extractSection(hex.content, 'THE IMAGE');
+}
+
+module.exports = { loadContent, getIntro, getTitle, getHexFilename, getComFilename, getMovingLineTexts, getJudgment, getImage };

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>I Ching — The Book of Changes</title>
+  <meta name="description" content="The I Ching, or Book of Changes — Wilhelm/Baynes translation">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,200..900;1,7..72,200..900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #fdfdfc;
+      --text: #1a1a1a;
+      --text-secondary: #6b6b6b;
+      --accent: #4a4a4a;
+      --border: #e2e2e2;
+      --blockquote-bg: transparent;
+      --blockquote-border: #c0c0c0;
+      --toc-hover: #f5f5f5;
+      --font-body: 'Literata', 'Georgia', serif;
+      --font-ui: -apple-system, 'Segoe UI', sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111110;
+        --text: #d8d8d4;
+        --text-secondary: #888880;
+        --accent: #a0a098;
+        --border: #2a2a28;
+        --blockquote-bg: transparent;
+        --blockquote-border: #444440;
+        --toc-hover: #1a1a18;
+      }
+    }
+
+    html {
+      font-size: 18.5px;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    body {
+      font-family: var(--font-body);
+      font-weight: 420;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.8;
+      min-height: 100vh;
+    }
+
+    /* ── Layout ── */
+
+    .container {
+      max-width: 620px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 6rem;
+    }
+
+    /* ── Fade-in ── */
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(6px);
+      animation: appear 0.5s ease forwards;
+    }
+
+    @keyframes appear {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Loading ── */
+
+    #loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 60vh;
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    /* ── Table of Contents (home) ── */
+
+    .home-title {
+      text-align: center;
+      margin-bottom: 4rem;
+      padding-top: 2rem;
+    }
+
+    .home-title h1 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+    }
+
+    .home-title .subtitle {
+      font-size: 1.05rem;
+      font-weight: 400;
+      font-style: italic;
+      color: var(--text-secondary);
+    }
+
+    .toc-section {
+      margin-bottom: 2.5rem;
+    }
+
+    .toc-section h2 {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .toc-list {
+      list-style: none;
+    }
+
+    .toc-list li {
+      border-bottom: 1px solid transparent;
+    }
+
+    .toc-list a {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+      padding: 0.3rem 0.5rem;
+      margin: 0 -0.5rem;
+      text-decoration: none;
+      color: var(--text);
+      border-radius: 4px;
+      transition: background 0.15s ease;
+    }
+
+    .toc-list a:hover {
+      background: var(--toc-hover);
+    }
+
+    .toc-num {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      min-width: 1.6rem;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .toc-name {
+      font-size: 1.05rem;
+    }
+
+    .toc-section .toc-list--plain a {
+      font-size: 1rem;
+      padding: 0.25rem 0.5rem;
+    }
+
+    /* Hexagram grid: two columns for the 64 hexagrams */
+    .toc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 2rem;
+    }
+
+    @media (max-width: 500px) {
+      .toc-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Commentary toggle */
+    .toc-toggle {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.7rem;
+      border-radius: 3px;
+      margin-top: 0.5rem;
+      transition: color 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+
+    .toc-toggle:hover {
+      color: var(--text);
+      border-color: var(--accent);
+    }
+
+    /* ── Chapter view ── */
+
+    .back-link {
+      display: inline-block;
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      text-decoration: none;
+      margin-bottom: 2.5rem;
+      transition: color 0.15s ease;
+    }
+
+    .back-link:hover {
+      color: var(--text);
+    }
+
+    .back-link::before {
+      content: '←  ';
+    }
+
+    /* ── Typography (rendered markdown) ── */
+
+    #content h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      line-height: 1.25;
+      margin-bottom: 1.8rem;
+      letter-spacing: 0.01em;
+    }
+
+    #content h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 3rem;
+      margin-bottom: 0.8rem;
+    }
+
+    #content h3 {
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-top: 2.8rem;
+      margin-bottom: 0.6rem;
+    }
+
+    #content h4 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-style: italic;
+      margin-top: 2rem;
+      margin-bottom: 0.4rem;
+    }
+
+    #content p {
+      margin-bottom: 1.3rem;
+    }
+
+    #content blockquote {
+      margin: 1.6rem 0;
+      padding: 0 0 0 1.5rem;
+      border-left: 2px solid var(--blockquote-border);
+      font-style: italic;
+      font-weight: 400;
+      font-size: 1.1rem;
+      line-height: 2;
+      color: var(--text);
+    }
+
+    #content blockquote p {
+      margin-bottom: 0.4rem;
+    }
+
+    #content blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    #content hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 3rem 0;
+    }
+
+    #content a {
+      color: var(--text);
+      text-decoration: underline;
+      text-decoration-color: var(--border);
+      text-underline-offset: 3px;
+      transition: text-decoration-color 0.15s;
+    }
+
+    #content a:hover {
+      text-decoration-color: var(--text);
+    }
+
+    #content sup {
+      font-size: 0.65em;
+      line-height: 0;
+    }
+
+    #content strong {
+      font-weight: 700;
+    }
+
+    #content em {
+      font-style: italic;
+    }
+
+    #content img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 2rem auto;
+    }
+
+    /* Chapter navigation */
+    .chapter-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-ui);
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .chapter-nav a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .chapter-nav a:hover {
+      color: var(--text);
+    }
+
+    /* Error */
+    .error {
+      text-align: center;
+      color: var(--text-secondary);
+      padding: 4rem 1rem;
+      font-size: 1.1rem;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* Print */
+    @media print {
+      body { font-size: 11pt; }
+      .back-link, .chapter-nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="loading">Loading</div>
+    <div id="home" style="display:none"></div>
+    <div id="chapter" style="display:none">
+      <a href="#" class="back-link">Contents</a>
+      <div id="content"></div>
+      <div id="chapter-nav"></div>
+    </div>
+  </div>
+
+  <script>
+    // ── Table of contents data ──
+    const TOC = {
+      frontMatter: [
+        { title: 'Preface to the Third Edition', file: '00-preface-hellmut-wilhelm' },
+        { title: 'The Major Divisions of the Material', file: '00-major-divisions' },
+        { title: 'Foreword by C.\u2009G. Jung', file: '00-foreword-jung' },
+        { title: 'Translator\u2019s Note', file: '00-translators-note' },
+        { title: 'Preface by Richard Wilhelm', file: '00-preface-richard-wilhelm' },
+        { title: 'Introduction', file: '00-introduction' },
+      ],
+      hexagrams: [],  // filled below
+      book2: [
+        { title: 'Introduction to Book II', file: 'book2-00-introduction' },
+        { title: 'Shuo Kua: Discussion of the Trigrams', file: 'book2-01-shuo-kua' },
+        { title: 'Ta Chuan: The Great Treatise', file: 'book2-02-ta-chuan' },
+        { title: 'The Structure of the Hexagrams', file: 'book2-03-structure-of-hexagrams' },
+      ],
+      appendixes: [
+        { title: 'On Consulting the Oracle', file: 'appendix-01-consulting-the-oracle' },
+        { title: 'The Hexagrams by Houses', file: 'appendix-02-hexagrams-by-houses' },
+        { title: 'Notes', file: 'appendix-03-notes' },
+      ],
+    };
+
+    // Hexagram names (1–64) with their file stems
+    const HEX_NAMES = [
+      ["Ch'ien","The Creative"],["K'un","The Receptive"],["Chun","Difficulty at the Beginning"],
+      ["Mêng","Youthful Folly"],["Hsü","Waiting"],["Sung","Conflict"],
+      ["Shih","The Army"],["Pi","Holding Together"],["Hsiao Ch'u","The Taming Power of the Small"],
+      ["Lü","Treading"],["T'ai","Peace"],["P'i","Standstill"],
+      ["T'ung Jên","Fellowship with Men"],["Ta Yu","Possession in Great Measure"],
+      ["Ch'ien","Modesty"],["Yü","Enthusiasm"],["Sui","Following"],
+      ["Ku","Work on What Has Been Spoiled"],["Lin","Approach"],["Kuan","Contemplation"],
+      ["Shih Ho","Biting Through"],["Pi","Grace"],["Po","Splitting Apart"],
+      ["Fu","Return"],["Wu Wang","Innocence"],["Ta Ch'u","The Taming Power of the Great"],
+      ["I","Corners of the Mouth"],["Ta Kuo","Preponderance of the Great"],
+      ["K'an","The Abysmal"],["Li","The Clinging"],
+      ["Hsien","Influence"],["Hêng","Duration"],["Tun","Retreat"],
+      ["Ta Chuang","The Power of the Great"],["Chin","Progress"],
+      ["Ming I","Darkening of the Light"],["Chia Jên","The Family"],
+      ["K'uei","Opposition"],["Chien","Obstruction"],["Hsieh","Deliverance"],
+      ["Sun","Decrease"],["I","Increase"],["Kuai","Break-through"],
+      ["Kou","Coming to Meet"],["Ts'ui","Gathering Together"],
+      ["Shêng","Pushing Upward"],["K'un","Oppression"],["Ching","The Well"],
+      ["Ko","Revolution"],["Ting","The Caldron"],
+      ["Chên","The Arousing"],["Kên","Keeping Still"],
+      ["Chien","Development"],["Kuei Mei","The Marrying Maiden"],
+      ["Fêng","Abundance"],["Lü","The Wanderer"],
+      ["Sun","The Gentle"],["Tui","The Joyous"],
+      ["Huan","Dispersion"],["Chieh","Limitation"],
+      ["Chung Fu","Inner Truth"],["Hsiao Kuo","Preponderance of the Small"],
+      ["Chi Chi","After Completion"],["Wei Chi","Before Completion"],
+    ];
+
+    // Build hex file list by scanning actual files
+    // We'll match them from the known file listing
+    const HEX_FILES = [
+      'ch-ien-the-creative','k-un-the-receptive','chun-difficulty-at-the-beginning',
+      'm-ng-youthful-folly','hs-waiting-nourishment','sung-conflict',
+      'shih-the-army','pi-holding-together-union','hsiao-ch-u-the-taming-power-of-the-small',
+      'l-treading-conduct','t-ai-peace','p-i-standstill-stagnation',
+      't-ung-j-n-fellowship-with-men','ta-yu-possession-in-great-measure',
+      'ch-ien-modesty','y-enthusiasm','sui-following',
+      'ku-work-on-what-has-been-spoiled-decay','lin-approach','kuan-contemplation-view',
+      'shih-ho-biting-through','pi-grace','po-splitting-apart',
+      'fu-return-the-turning-point','wu-wang-innocence-the-unexpected',
+      'ta-ch-u-the-taming-power-of-the-great','i-the-corners-of-the-mouth-providing-nourishment',
+      'ta-kuo-preponderance-of-the-great','k-an-the-abysmal-water','li-the-clinging-fire',
+      'hsien-influence-wooing','h-ng-duration','tun-retreat',
+      'ta-chuang-the-power-of-the-great','chin-progress','ming-i-darkening-of-the-light',
+      'chia-j-n-the-family-the-clan','k-uei-opposition','chien-obstruction','hsieh-deliverance',
+      'sun-decrease','i-increase','kuai-break-through-resoluteness',
+      'kou-coming-to-meet','ts-ui-gathering-together-massing','sh-ng-pushing-upward',
+      'k-un-oppression-exhaustion','ching-the-well','ko-revolution-molting','ting-the-caldron',
+      'ch-n-the-arousing-shock-thunder','k-n-keeping-still-mountain',
+      'chien-development-gradual-progress','kuei-mei-the-marrying-maiden',
+      'f-ng-abundance-fullness','l-the-wanderer','sun-the-gentle-penetrating-wind',
+      'tui-the-joyous-lake','huan-dispersion-dissolution','chieh-limitation',
+      'chung-fu-inner-truth','hsiao-kuo-preponderance-of-the-small',
+      'chi-chi-after-completion','wei-chi-before-completion',
+    ];
+
+    for (let i = 0; i < 64; i++) {
+      const num = String(i + 1).padStart(2, '0');
+      TOC.hexagrams.push({
+        num: i + 1,
+        name: HEX_NAMES[i][0],
+        meaning: HEX_NAMES[i][1],
+        hexFile: `hex-${num}-${HEX_FILES[i]}`,
+        comFile: `com-${num}-${HEX_FILES[i]}`,
+      });
+    }
+
+    // ── Ordered list of all navigable files (for prev/next) ──
+    const ALL_FILES = [
+      ...TOC.frontMatter.map(f => f.file),
+      ...TOC.hexagrams.map(h => h.hexFile),
+      ...TOC.book2.map(f => f.file),
+      ...TOC.hexagrams.map(h => h.comFile),
+      ...TOC.appendixes.map(f => f.file),
+    ];
+
+    // ── Rendering ──
+
+    function renderHome() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('chapter').style.display = 'none';
+      const home = document.getElementById('home');
+      home.style.display = 'block';
+
+      let html = '<div class="fade-in">';
+      html += '<div class="home-title"><h1>I Ching</h1><div class="subtitle">The Book of Changes</div></div>';
+
+      // Front Matter
+      html += '<div class="toc-section"><h2>Front Matter</h2><ul class="toc-list toc-list--plain">';
+      for (const item of TOC.frontMatter) {
+        html += `<li><a href="#${item.file}"><span class="toc-name">${item.title}</span></a></li>`;
+      }
+      html += '</ul></div>';
+
+      // The 64 Hexagrams
+      html += '<div class="toc-section"><h2>Book I — The Text</h2><div class="toc-grid"><ul class="toc-list">';
+      for (let i = 0; i < 64; i++) {
+        if (i === 32) html += '</ul><ul class="toc-list">';
+        const h = TOC.hexagrams[i];
+        html += `<li><a href="#${h.hexFile}"><span class="toc-num">${h.num}.</span><span class="toc-name">${h.name}</span></a></li>`;
+      }
+      html += '</ul></div></div>';
+
+      // Book II
+      html += '<div class="toc-section"><h2>Book II — The Material</h2><ul class="toc-list toc-list--plain">';
+      for (const item of TOC.book2) {
+        html += `<li><a href="#${item.file}"><span class="toc-name">${item.title}</span></a></li>`;
+      }
+      html += '</ul></div>';
+
+      // Commentaries
+      html += '<div class="toc-section"><h2>Book III — The Commentaries</h2>';
+      html += '<div class="toc-grid"><ul class="toc-list">';
+      for (let i = 0; i < 64; i++) {
+        if (i === 32) html += '</ul><ul class="toc-list">';
+        const h = TOC.hexagrams[i];
+        html += `<li><a href="#${h.comFile}"><span class="toc-num">${h.num}.</span><span class="toc-name">${h.name}</span></a></li>`;
+      }
+      html += '</ul></div></div>';
+
+      // Appendixes
+      html += '<div class="toc-section"><h2>Appendixes</h2><ul class="toc-list toc-list--plain">';
+      for (const item of TOC.appendixes) {
+        html += `<li><a href="#${item.file}"><span class="toc-name">${item.title}</span></a></li>`;
+      }
+      html += '</ul></div>';
+
+      html += '</div>';
+      home.innerHTML = html;
+      document.title = 'I Ching — The Book of Changes';
+      window.scrollTo(0, 0);
+    }
+
+    async function renderChapter(file) {
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('loading').style.display = 'flex';
+      const chapterEl = document.getElementById('chapter');
+      const contentEl = document.getElementById('content');
+      const navEl = document.getElementById('chapter-nav');
+      chapterEl.style.display = 'none';
+
+      try {
+        const response = await fetch(`${file}.md`);
+        if (!response.ok) throw new Error('Chapter not found.');
+
+        let markdown = await response.text();
+
+        marked.setOptions({ breaks: false, gfm: true });
+
+        const renderer = new marked.Renderer();
+        renderer.image = function({ href, title, text }) {
+          return `<img src="${href}" alt="${text || ''}" title="${title || ''}" onerror="this.style.display='none'" loading="lazy">`;
+        };
+
+        // Clean docsify-style links: href="#/filename?id=anchor" → href="#anchor"
+        markdown = markdown.replace(/href="#\/[^"]*\?id=([^"]*)"/g, 'href="#$1"');
+
+        const html = marked.parse(markdown, { renderer });
+
+        document.getElementById('loading').style.display = 'none';
+        contentEl.innerHTML = html;
+        contentEl.className = 'fade-in';
+
+        // Build prev/next nav
+        const idx = ALL_FILES.indexOf(file);
+        let navHtml = '';
+        if (idx > 0) {
+          navHtml += `<a href="#${ALL_FILES[idx - 1]}">← Previous</a>`;
+        } else {
+          navHtml += '<span></span>';
+        }
+        if (idx < ALL_FILES.length - 1 && idx >= 0) {
+          navHtml += `<a href="#${ALL_FILES[idx + 1]}">Next →</a>`;
+        }
+        navEl.innerHTML = navHtml;
+        navEl.className = 'chapter-nav fade-in';
+
+        chapterEl.style.display = 'block';
+
+        // Update page title
+        const h1 = contentEl.querySelector('h1');
+        if (h1) {
+          document.title = h1.textContent + ' — I Ching';
+        }
+
+        window.scrollTo(0, 0);
+      } catch (err) {
+        document.getElementById('loading').style.display = 'none';
+        contentEl.innerHTML = `<div class="error"><p>Could not load chapter.</p><p style="font-size:0.85rem;margin-top:0.5rem">${err.message}</p></div>`;
+        navEl.innerHTML = '';
+        chapterEl.style.display = 'block';
+      }
+    }
+
+    // ── Router ──
+
+    let currentFile = null;
+
+    // Set of all known chapter files for distinguishing from in-page anchors
+    const KNOWN_FILES = new Set(ALL_FILES);
+
+    function getFile() {
+      // Support ?file= (for Telegram WebApp) and #hash (for browsing)
+      const params = new URLSearchParams(window.location.search);
+      const fromQuery = params.get('file');
+      if (fromQuery) return fromQuery;
+
+      const hash = window.location.hash.slice(1);
+      return hash || null;
+    }
+
+    function route() {
+      const file = getFile();
+
+      if (!file) {
+        currentFile = null;
+        renderHome();
+        return;
+      }
+
+      // If it's a known chapter file, load it
+      if (KNOWN_FILES.has(file)) {
+        if (file !== currentFile) {
+          currentFile = file;
+          renderChapter(file);
+        }
+        return;
+      }
+
+      // Otherwise it's an in-page anchor (footnote) — scroll to it
+      const el = document.getElementById(file);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    window.addEventListener('hashchange', route);
+    route();
+  </script>
+</body>
+</html>

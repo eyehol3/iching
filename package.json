@@ -1,0 +1,14 @@
+{
+  "name": "i-ching-telegram-bot",
+  "version": "1.0.0",
+  "description": "I Ching Telegram bot — coin toss readings with ASCII hexagrams and a minimal web reader",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "telegraf": "^4.16.3",
+    "dotenv": "^16.4.7"
+  }
+}

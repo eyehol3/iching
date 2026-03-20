@@ -1,0 +1,45 @@
+# Translator's Note by C. F. Baynes
+
+Translator’s Note
+
+by C. F. Baynes
+
+A translation of a translation is likely to evoke the questioning protest: Why risk the danger of a double distortion of a text? In the case of Richard Wilhelm’s version of the *I Ching*, the answer is simple and ready to hand. However many other translations of this book may appear, and whatever their excellence, Wilhelm’s will remain unique, both by reason of his relation to the *I Ching* and because of the background out of which his translation grew. Unlike any other translator of this ancient work, he did not envisage the learned world as his only audience, and therefore addressed himself to the difficult task of making the *I Ching* intelligible to the lay reader. He wished to bring this first philosophy, this first effort of men to place themselves in the cosmos, out of the domain of specialists in philology and to put it into the hands of individuals anywhere who, like the authors of the *I Ching*, are concerned with their relation to the universe and to their fellow men.
+
+No less unique than this purpose of Wilhelm’s with regard to his translation were the circumstances that enabled him to carry it out. Long residence in China, mastery of both the spoken and the written language, and close association with the cultural leaders of the day, made it possible for him to understand the Chinese classics from the standpoint of the Chinese themselves. In translating the *I Ching* he was guided by a scholar of the old school, one of the last of his kind, who knew thoroughly the great field of commentary literature that has grown up around the book in the course of the ages.
+
+Quite naturally also, it was Wilhelm’s particular wish to have his translation appear in English, widening by so much the circle of its readers. It is clear that in desiring thus to make available to many people the wisdom that he himself had found in the *I Ching*, Wilhelm presupposed in his readers a degree of spiritual integrity that, together with the essential dignity of the book, would preclude the use of the oracle for trivial purposes, or its exploitation by charlatans of whatever type. Time alone will show whether his faith was justified.
+
+I was studying analytical psychology in Zurich when Dr. Jung asked me to undertake the rendering of the German version into English. The translation was to have had Wilhelm’s supervision; this, it was thought, would compensate my ignorance of Chinese. But his death in 1930 came long before I was ready to submit a manuscript to him. As I proceeded with the translation, I found that one very real compensation for my lack of Chinese remained, namely, the access to its philosophy afforded me through my growing knowledge of the work of Jung. This gave me a key to the archetypal world of the *I Ching*.
+
+The second world war and attendant circumstances beyond my personal control brought many long interruptions to my undertaking. But in the end the delays worked wholly to the advantage of the translation. Shortly after the manuscript had gone to press, Dr. Hellmut Wilhelm, who like his father has devoted much time to the study of the *I Ching*, left his home in Peiping to continue his work in sinology in the United States. I had already had expert advice from him by letter, and had always hoped that by some unexpected turn of fate it would be possible for him to criticize my translation, since he alone knew his father’s work sufficiently well to take the latter’s place. It was now my great good fortune to go over the proofs with him while he checked the translation against the Chinese text—using the very volumes that had accompanied Richard Wilhelm “on many a journey, halfway round the globe.”
+
+With Dr. Wilhelm’s arrival, a question arose as to whether it would be wise to rewrite certain passages of the translation to conform them to findings of modern scholarship that were not available to Richard Wilhelm when he did his work. Dr. Wilhelm decided that the book should be left as his father wrote it, because in no instance was the proposed change of more than minor importance with respect to the work as a whole.
+
+In the parts of the German text that render the Chinese, I have tried to be as literal in my translation as possible, in order to establish a guideline in the highly allusive and symbolic language. (One need only compare passages in Wilhelm’s version with the same passages as rendered by Legge in order to see how completely different two interpretations of the same Chinese sentence may be.) When I have deviated from this rule, it has been in the few places where Dr. Wilhelm pointed out that a paraphrase is needed to cover the Chinese meaning.
+
+The great age and unbroken continuity of Chinese culture are wonderful to contemplate; to keep this perspective before the reader’s mind, I have given, where possible, dates for the works and authors mentioned by Wilhelm. All footnotes added by me are inclosed in square brackets.
+
+Wherever the English names of the hexagrams appear in the body of the text, they are printed in small capitals; in this way they can be distinguished from trigrams of the same name. The Chinese characters for the names of the hexagrams have been rewritten for this edition. I have to thank Dr. Shih Yu-chung for this contribution. Wade’s system of transliteration has been used in putting the German version of Chinese words into their English equivalents. The excellent key to the hexagrams was brought to my notice by Carol Fisher Baumann.
+
+The Chinese title page is from the hand of Professor Tung Tso-pin of the Academia Sinica.
+
+There are few sentences in this translation that were not discussed again and again before they took final form, and the work as a whole has been revised many times. For aid in the early stages of my undertaking I am indebted to Emma Jung and to Frieda Hauswirth. Later, when I returned to this country, I received very great assistance from Dr. Erla Rodakiewicz and from my daughter, Ximena de Angulo. For help at that time on matters of style I am also grateful to Elizabeth M. Brown and to Mary E. Strong. Dr. Wilfrid Lay, who learned Chinese for the sole purpose of reading the *I Ching*, brought to my attention a number of points that I would otherwise have missed. Dr. George H. Danton read the manuscript two years before it reached its finished form, and gave me valuable suggestions. For the final truing up of the translation with the German text, and for rescuing it from the ever-present threatof translator’s English, I cannot give praise and appreciation enough to my editor, Renée Darmstadter.
+
+Accuracy and intelligibility have been the goals set for this translation, but it must prove itself in a still more vital test. If the reader is drawn out of the accustomed framework of his thought to view the world in a new perspective, if his imagination is stimulated and his psychological insight deepened, he will know that Wilhelm’s *I Ching* has been faithfully reproduced.
+
+CARY F. BAYNES
+
+*Morris, Connecticut, 1949*
+
+Translator’s Note for the Third Edition
+
+This edition presents the *I Ching* in an entirely new format, more compact as a book, and clearer in its typographical distinctions. Professor Hellmut Wilhelm, of the Far Eastern and Russian Institute in the University of Washington (Seattle), has contributed a preface to the new edition, in which he comments on recent research and on other translations of the Book of Changes and elucidates the principles that guided his father’s work. Professor Wilhelm has approved the editors’ additions, rearrangements of some of the secondary material, and revisions of bibliographical information in footnotes. The rearrangements consist in placing a chart, “The Major Divisions of the Material,” adjacent to the new preface, with which it is interrelated; and moving a section “On Consulting the Oracle” to the end of the volume, for convenience. An index of the hexagrams by pattern has been taken over from the German edition, and a general index has been compiled.
+
+As I remarked in a Translator’s Note to the second edition, I am indebted to Professor Wilhelm also for an explanatory note concerning the Chinese title page, and to Mr. R. F. C. Hull, the translator of the Collected Works of C. G. Jung, for having called my attention to an error of translation in Jung’s foreword. With minor changes, the foreword was publishedin 1958 in *Psychology and Religion: West and East* (Collected Works of C. G. Jung, vol. 11).
+
+The Western student of the *I Ching* is always grateful for aid in the understanding of the Book. He will find such aid in two works of Professor Hellmut Wilhelm published since the first edition of the English version of the *I Ching* in 1950: *Change: Eight Lectures on the I Ching* (New York: Bollingen Series LXII, and London, 1960) and “The Concept of Time in the Book of Changes,” in *Man and Time* (Papers from the Eranos Yearbooks, 3; New York: Bollingen Series XXX, and London, 1957).
+
+C. F. B.
+
+*Morris, Connecticut, January I967*

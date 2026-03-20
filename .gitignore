@@ -3,5 +3,7 @@ node_modules/
 .DS_Store
 .agent/
 .vscode/
+.github/prompts/
+.github/skills/
 openspec/
 archive/

@@ -7,7 +7,7 @@ const { renderHexagram } = require('./renderer');
  * Strip HTML tags (footnote superscripts etc.) from text.
  */
 function stripHtml(text) {
-  return text.replace(/<[^>]+>/g, '');
+  return text.replace(/<sup>[\s\S]*?<\/sup>/g, '').replace(/<[^>]+>/g, '');
 }
 
 /**
@@ -85,8 +85,8 @@ function createBot(token, webappUrl) {
     // Title
     parts.push('<b>' + esc(title) + '</b>');
 
-    // ASCII hexagram — pre tag for monospace without copy button
-    parts.push('<pre>' + esc(ascii) + '</pre>');
+    // ASCII hexagram in code block with ☯ label
+    parts.push('<pre><code class="language-☯">' + esc(ascii) + '</code></pre>');
 
     // Intro (italic, stripped of HTML)
     const intro = getIntro(hexNum);

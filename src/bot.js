@@ -90,8 +90,9 @@ function createBot(token, webappUrl) {
     ctx.reply(
       currentUi.langSwitchLabel,
       Markup.inlineKeyboard([
-        [Markup.button.callback('🇬🇧 English', 'lang:en')],
-        [Markup.button.callback('🇺🇦 Українська', 'lang:ua')],
+        ...SUPPORTED_LANGS.map(l =>
+          [Markup.button.callback(locales[l].ui.langSwitchLabel, `lang:${l}`)]
+        ),
       ])
     );
   });
@@ -146,13 +147,13 @@ function createBot(token, webappUrl) {
     // Judgment
     const judgment = getJudgment(hexNum, lang);
     if (judgment) {
-      parts.push('<b>' + esc(ui.theJudgment) + '</b>\n' + quoteToHtml(judgment));
+      parts.push('<b>' + esc(locales[lang].sectionHeaders.judgment) + '</b>\n' + quoteToHtml(judgment));
     }
 
     // Image
     const image = getImage(hexNum, lang);
     if (image) {
-      parts.push('<b>' + esc(ui.theImage) + '</b>\n' + quoteToHtml(image));
+      parts.push('<b>' + esc(locales[lang].sectionHeaders.image) + '</b>\n' + quoteToHtml(image));
     }
 
     // Changing lines

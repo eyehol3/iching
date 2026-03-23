@@ -85,11 +85,13 @@ function createBot(token, webappUrl) {
   });
 
   bot.command('lang', (ctx) => {
+    const current = getUserLang(ctx);
+    const currentUi = locales[current].ui;
     ctx.reply(
-      '🌐',
+      currentUi.langSwitchLabel,
       Markup.inlineKeyboard([
-        Markup.button.callback('English', 'lang:en'),
-        Markup.button.callback('Українська', 'lang:ua'),
+        [Markup.button.callback('🇬🇧 English', 'lang:en')],
+        [Markup.button.callback('🇺🇦 Українська', 'lang:ua')],
       ])
     );
   });
@@ -98,8 +100,15 @@ function createBot(token, webappUrl) {
     bot.action(`lang:${lang}`, (ctx) => {
       setUserLang(ctx, lang);
       const ui = locales[lang].ui;
+      const otherLang = lang === 'en' ? 'ua' : 'en';
+      const otherUi = locales[otherLang].ui;
       ctx.answerCbQuery(ui.langSet);
-      ctx.editMessageText(`${ui.langSet}`);
+      ctx.editMessageText(ui.startMessage, {
+        parse_mode: 'HTML',
+        ...Markup.inlineKeyboard([
+          Markup.button.callback(otherUi.langSwitchLabel, `lang:${otherLang}`),
+        ]),
+      });
     });
   }
 

@@ -19,8 +19,8 @@
         Telegram.WebApp.expand();
         var isDark = Telegram.WebApp.colorScheme === 'dark';
         var bg = isDark ? '#111110' : '#fdfdfc';
-        Telegram.WebApp.setHeaderColor(bg);
         Telegram.WebApp.setBackgroundColor(bg);
+        Telegram.WebApp.setHeaderColor('bg_color');
       } catch(e) {}
     }
   </script>
@@ -597,7 +597,12 @@
     const DEFAULT_LANG = 'en';
 
     function detectLang() {
-      // 1. Check Telegram WebApp user language
+      // 1. Check localStorage for saved preference
+      try {
+        const saved = localStorage.getItem('lang');
+        if (saved && SUPPORTED_LANGS.includes(saved)) return saved;
+      } catch(e) {}
+      // 2. Check Telegram WebApp user language
       try {
         const tg = Telegram.WebApp;
         if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -622,6 +627,7 @@
       currentAllFiles = buildAllFiles(currentTOC);
       currentKnownFiles = new Set(currentAllFiles);
       document.documentElement.lang = currentLang === 'ua' ? 'uk' : 'en';
+      try { localStorage.setItem('lang', currentLang); } catch(e) {}
     }
 
     // ── Rendering ──

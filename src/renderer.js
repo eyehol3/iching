@@ -1,10 +1,10 @@
+const { getTrigram } = require('./trigrams');
+const { locales } = require('./locales');
+
 /**
  * Render a single line of the hexagram.
  * Yang (7,9) = solid:  ━━━━━━━━━
  * Yin  (6,8) = broken: ━━━   ━━━
- *
- * @param {number} value - line value (6–9)
- * @returns {string}
  */
 function renderLine(value) {
   const isYang = value === 7 || value === 9;
@@ -15,13 +15,17 @@ function renderLine(value) {
  * Render a hexagram with lines and trigram labels.
  *
  * @param {number[]} lines - 6 values bottom-to-top
- * @param {{ number, lower, upper }} hexInfo - from lookupHexagram
+ * @param {{ number, lowerPattern, upperPattern }} hexInfo - from lookupHexagram
+ * @param {string} lang - locale key
  * @returns {string} formatted text
  */
-function renderHexagram(lines, hexInfo) {
+function renderHexagram(lines, hexInfo, lang = 'en') {
+  const locale = locales[lang];
+  const upper = getTrigram(hexInfo.upperPattern, lang);
+  const lower = getTrigram(hexInfo.lowerPattern, lang);
   const parts = [];
 
-  parts.push(`  above: ${hexInfo.upper.name} — ${hexInfo.upper.attribute}`);
+  parts.push(`  ${locale.renderer.above}: ${upper.name} — ${upper.attribute}`);
   parts.push('');
 
   // Lines rendered top-to-bottom (line 6 at top, line 1 at bottom)
@@ -31,7 +35,7 @@ function renderHexagram(lines, hexInfo) {
   }
 
   parts.push('');
-  parts.push(`  below: ${hexInfo.lower.name} — ${hexInfo.lower.attribute}`);
+  parts.push(`  ${locale.renderer.below}: ${lower.name} — ${lower.attribute}`);
 
   return parts.join('\n');
 }

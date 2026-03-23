@@ -1,37 +1,29 @@
-/**
- * The 8 trigrams — name, attribute, and binary pattern (bottom to top).
- * Binary: 1 = yang (solid), 0 = yin (broken)
- */
-const TRIGRAMS = [
-  { name: "Ch'ien",  attribute: 'The Creative, Heaven',  pattern: '111' },
-  { name: "Chên",    attribute: 'The Arousing, Thunder',  pattern: '100' },
-  { name: "K'an",    attribute: 'The Abysmal, Water',     pattern: '010' },
-  { name: "Kên",     attribute: 'Keeping Still, Mountain', pattern: '001' },
-  { name: "K'un",    attribute: 'The Receptive, Earth',   pattern: '000' },
-  { name: "Sun",     attribute: 'The Gentle, Wind',       pattern: '011' },
-  { name: "Li",      attribute: 'The Clinging, Fire',     pattern: '110' },
-  { name: "Tui",     attribute: 'The Joyous, Lake',       pattern: '101' },
-];
+const { locales } = require('./locales');
 
 /**
- * Map binary pattern → trigram object for fast lookup
+ * The 8 trigrams — binary pattern (bottom to top).
+ * Binary: 1 = yang (solid), 0 = yin (broken)
+ * Display names come from locales.
  */
-const TRIGRAM_BY_PATTERN = {};
-for (const t of TRIGRAMS) {
-  TRIGRAM_BY_PATTERN[t.pattern] = t;
+const TRIGRAM_PATTERNS = ['111', '100', '010', '001', '000', '011', '110', '101'];
+
+/**
+ * Get a trigram object for the given pattern and language.
+ * @param {string} pattern - binary pattern e.g. '111'
+ * @param {string} lang - 'en' or 'ua'
+ * @returns {{ name: string, attribute: string, pattern: string }}
+ */
+function getTrigram(pattern, lang = 'en') {
+  const t = locales[lang].trigrams[pattern];
+  if (!t) return null;
+  return { ...t, pattern };
 }
 
 /**
  * King Wen sequence lookup table.
  * KING_WEN[upper_pattern][lower_pattern] = hexagram number (1–64)
- *
- * Rows = upper trigram, Cols = lower trigram
- * Order: Ch'ien, Chên, K'an, Kên, K'un, Sun, Li, Tui
- * Patterns: 111, 100, 010, 001, 000, 011, 110, 101
  */
 const KING_WEN = {
-  //         Ch'ien  Chên   K'an   Kên    K'un   Sun    Li     Tui
-  //         111     100    010    001    000    011    110    101
   '111': { '111':1,  '100':25, '010':6,  '001':33, '000':12, '011':44, '110':13, '101':10 },
   '100': { '111':34, '100':51, '010':40, '001':62, '000':16, '011':32, '110':55, '101':54 },
   '010': { '111':5,  '100':3,  '010':29, '001':39, '000':8,  '011':48, '110':63, '101':60 },
@@ -42,4 +34,4 @@ const KING_WEN = {
   '101': { '111':43, '100':17, '010':47, '001':31, '000':45, '011':28, '110':49, '101':58 },
 };
 
-module.exports = { TRIGRAMS, TRIGRAM_BY_PATTERN, KING_WEN };
+module.exports = { getTrigram, KING_WEN };

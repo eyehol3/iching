@@ -2,6 +2,31 @@ const { Telegraf, Markup } = require('telegraf');
 const { validateInput, getReading } = require('./hexagram');
 const { getIntro, getTitle, getHexFilename, getComFilename, getMovingLineTexts, getJudgment, getImage } = require('./content');
 const { renderHexagram } = require('./renderer');
+const { locales, SUPPORTED_LANGS, DEFAULT_LANG } = require('./locales');
+
+// Per-user language preference (userId → 'en' | 'ua')
+const userLangs = new Map();
+
+/**
+ * Get user's language, auto-detecting from Telegram on first use.
+ */
+function getUserLang(ctx) {
+  const userId = ctx.from?.id;
+  if (!userId) return DEFAULT_LANG;
+
+  if (userLangs.has(userId)) return userLangs.get(userId);
+
+  // Auto-detect: Ukrainian Telegram users get Ukrainian
+  const tgLang = ctx.from?.language_code || '';
+  const lang = tgLang === 'uk' ? 'ua' : DEFAULT_LANG;
+  userLangs.set(userId, lang);
+  return lang;
+}
+
+function setUserLang(ctx, lang) {
+  const userId = ctx.from?.id;
+  if (userId) userLangs.set(userId, lang);
+}
 
 /**
  * Strip HTML tags (footnote superscripts etc.) from text.
@@ -35,82 +60,97 @@ function createBot(token, webappUrl) {
   const bot = new Telegraf(token);
 
   bot.start((ctx) => {
-    ctx.reply(
-      '☰ <b>The Book of Changes</b>\n\n' +
-      'This is the I Ching — the ancient Chinese oracle.\n\n' +
-      'To consult it:\n' +
-      '1. Hold your question in mind\n' +
-      '2. Toss three coins six times\n' +
-      '3. Each toss: heads=3, tails=2 — add the values\n' +
-      '4. Send me all six numbers as one string\n\n' +
-      '<i>Example:</i> <code>789678</code> (bottom line first)\n\n' +
-      'Each digit will be 6, 7, 8, or 9.\n' +
-      'Use /how_to for the full guide.',
-      { parse_mode: 'HTML' }
-    );
+    const lang = getUserLang(ctx);
+    const ui = locales[lang].ui;
+    const otherLang = lang === 'en' ? 'ua' : 'en';
+    const otherUi = locales[otherLang].ui;
+    ctx.reply(ui.startMessage, {
+      parse_mode: 'HTML',
+      ...Markup.inlineKeyboard([
+        Markup.button.callback(otherUi.langSwitchLabel, `lang:${otherLang}`),
+      ]),
+    });
   });
 
   bot.command('how_to', (ctx) => {
-    const file = 'appendix-01-consulting-the-oracle';
+    const lang = getUserLang(ctx);
+    const ui = locales[lang].ui;
+    const file = `${lang}/appendix-01-consulting-the-oracle`;
     ctx.reply(
-      '📖 Learn the coin oracle method:',
+      ui.howToPrompt,
       Markup.inlineKeyboard([
-        Markup.button.webApp('📖 On Consulting the Oracle', `${webappUrl}?file=${file}`)
+        Markup.button.webApp(ui.howToButton, `${webappUrl}?file=${file}`)
       ])
     );
   });
 
+  bot.command('lang', (ctx) => {
+    ctx.reply(
+      '🌐',
+      Markup.inlineKeyboard([
+        Markup.button.callback('English', 'lang:en'),
+        Markup.button.callback('Українська', 'lang:ua'),
+      ])
+    );
+  });
+
+  for (const lang of SUPPORTED_LANGS) {
+    bot.action(`lang:${lang}`, (ctx) => {
+      setUserLang(ctx, lang);
+      const ui = locales[lang].ui;
+      ctx.answerCbQuery(ui.langSet);
+      ctx.editMessageText(`${ui.langSet}`);
+    });
+  }
+
   bot.on('text', (ctx) => {
     const input = ctx.message.text.trim();
+    const lang = getUserLang(ctx);
+    const ui = locales[lang].ui;
 
     const validation = validateInput(input);
     if (!validation.valid) {
-      ctx.reply(
-        'That doesn\'t look like a coin toss result.\n\n' +
-        'Send exactly 6 digits, each 6–9 (bottom line first).\n' +
-        'Example: <code>789678</code>',
-        { parse_mode: 'HTML' }
-      );
+      ctx.reply(ui.invalidInput, { parse_mode: 'HTML' });
       return;
     }
 
     const reading = getReading(input);
     const hexNum = reading.primary.number;
-    const title = getTitle(hexNum);
+    const title = getTitle(hexNum, lang);
 
-    const ascii = renderHexagram(reading.lines, reading.primary);
+    const ascii = renderHexagram(reading.lines, reading.primary, lang);
 
     const parts = [];
 
     // Title
     parts.push('<b>' + esc(title) + '</b>');
 
-    // ASCII hexagram in code block with ☯ label
+    // ASCII hexagram
     parts.push('<pre><code class="language-☯">' + esc(ascii) + '</code></pre>');
 
-    // Intro (italic, stripped of HTML)
-    const intro = getIntro(hexNum);
+    // Intro
+    const intro = getIntro(hexNum, lang);
     if (intro) {
       parts.push('<i>' + esc(stripHtml(intro)) + '</i>');
     }
 
-    // The Judgment
-    const judgment = getJudgment(hexNum);
+    // Judgment
+    const judgment = getJudgment(hexNum, lang);
     if (judgment) {
-      parts.push('<b>THE JUDGMENT</b>\n' + quoteToHtml(judgment));
+      parts.push('<b>' + esc(ui.theJudgment) + '</b>\n' + quoteToHtml(judgment));
     }
 
-    // The Image
-    const image = getImage(hexNum);
+    // Image
+    const image = getImage(hexNum, lang);
     if (image) {
-      parts.push('<b>THE IMAGE</b>\n' + quoteToHtml(image));
+      parts.push('<b>' + esc(ui.theImage) + '</b>\n' + quoteToHtml(image));
     }
 
     // Changing lines
     if (reading.changingLines.length > 0) {
-      const lineTexts = getMovingLineTexts(hexNum, reading.changingLines, reading.lines);
+      const lineTexts = getMovingLineTexts(hexNum, reading.changingLines, reading.lines, lang);
       if (lineTexts.length > 0) {
-        const changingParts = ['<b>Changing lines:</b>'];
+        const changingParts = ['<b>' + esc(ui.changingLines) + '</b>'];
         for (const lt of lineTexts) {
           const ltLines = lt.split('\n');
           const header = ltLines[0].replace(/^#+\s*/, '');
@@ -121,38 +161,37 @@ function createBot(token, webappUrl) {
       }
 
       if (reading.secondary) {
-        const secTitle = getTitle(reading.secondary.number);
+        const secTitle = getTitle(reading.secondary.number, lang);
         if (secTitle) {
-          parts.push('⤷ Transforms into <b>' + esc(secTitle) + '</b>');
+          parts.push('⤷ ' + esc(ui.transformsInto) + ' <b>' + esc(secTitle) + '</b>');
         }
       }
     }
 
     const message = parts.join('\n\n');
-
     const replyOpts = { parse_mode: 'HTML' };
 
     if (webappUrl) {
       const buttons = [];
-      const hexFile = getHexFilename(hexNum);
-      const comFile = getComFilename(hexNum);
+      const hexFile = getHexFilename(hexNum, lang);
+      const comFile = getComFilename(hexNum, lang);
 
       if (hexFile) {
-        buttons.push(Markup.button.webApp('📖 Read Chapter', `${webappUrl}?file=${hexFile}`));
+        buttons.push(Markup.button.webApp('📖 ' + ui.readChapter, `${webappUrl}?file=${lang}/${hexFile}`));
       }
       if (comFile) {
-        buttons.push(Markup.button.webApp('📝 Commentary', `${webappUrl}?file=${comFile}`));
+        buttons.push(Markup.button.webApp('📝 ' + ui.commentary, `${webappUrl}?file=${lang}/${comFile}`));
       }
 
       if (reading.secondary) {
         const secNum = reading.secondary.number;
-        const secHexFile = getHexFilename(secNum);
-        const secComFile = getComFilename(secNum);
+        const secHexFile = getHexFilename(secNum, lang);
+        const secComFile = getComFilename(secNum, lang);
         if (secHexFile) {
-          buttons.push(Markup.button.webApp('📖 ' + (getTitle(secNum)?.split('/')[0]?.trim() || 'Hex ' + secNum), `${webappUrl}?file=${secHexFile}`));
+          buttons.push(Markup.button.webApp('📖 ' + (getTitle(secNum, lang)?.split('/')[0]?.trim() || 'Hex ' + secNum), `${webappUrl}?file=${lang}/${secHexFile}`));
         }
         if (secComFile) {
-          buttons.push(Markup.button.webApp('📝 ' + (getTitle(secNum)?.split('/')[0]?.trim() || 'Com ' + secNum), `${webappUrl}?file=${secComFile}`));
+          buttons.push(Markup.button.webApp('📝 ' + (getTitle(secNum, lang)?.split('/')[0]?.trim() || 'Com ' + secNum), `${webappUrl}?file=${lang}/${secComFile}`));
         }
       }
 

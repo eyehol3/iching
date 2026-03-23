@@ -1,4 +1,4 @@
-const { TRIGRAM_BY_PATTERN, KING_WEN } = require('./trigrams');
+const { KING_WEN } = require('./trigrams');
 
 /**
  * Validate coin-toss input: exactly 6 digits, each 6–9.
@@ -29,25 +29,25 @@ function lineToYinYang(value) {
 }
 
 /**
- * Determine a trigram from 3 line values (bottom to top).
+ * Get the binary pattern for a trigram from 3 line values.
  * @param {number[]} lines - 3 values, each 6–9
- * @returns {object} trigram object from TRIGRAM_BY_PATTERN
+ * @returns {string} binary pattern e.g. '111'
  */
-function getTrigram(lines) {
-  const pattern = lines.map(lineToYinYang).join('');
-  return TRIGRAM_BY_PATTERN[pattern];
+function trigramPattern(lines) {
+  return lines.map(lineToYinYang).join('');
 }
 
 /**
  * Look up a hexagram from 6 line values.
+ * Returns pattern strings for trigrams (display names resolved per-locale at render time).
  * @param {number[]} lines - 6 values (bottom to top), each 6–9
- * @returns {{ number: number, lower: object, upper: object }}
+ * @returns {{ number: number, lowerPattern: string, upperPattern: string }}
  */
 function lookupHexagram(lines) {
-  const lower = getTrigram(lines.slice(0, 3));
-  const upper = getTrigram(lines.slice(3, 6));
-  const number = KING_WEN[upper.pattern][lower.pattern];
-  return { number, lower, upper };
+  const lowerPattern = trigramPattern(lines.slice(0, 3));
+  const upperPattern = trigramPattern(lines.slice(3, 6));
+  const number = KING_WEN[upperPattern][lowerPattern];
+  return { number, lowerPattern, upperPattern };
 }
 
 /**

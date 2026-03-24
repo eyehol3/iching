@@ -393,6 +393,7 @@
       <a href="#" class="back-link" id="back-link">Contents</a>
       <div id="content"></div>
       <div id="chapter-nav"></div>
+      <div id="chapter-lang" class="lang-toggle"></div>
     </div>
   </div>
 
@@ -744,6 +745,10 @@
         }
         navEl.innerHTML = navHtml;
         navEl.className = 'chapter-nav fade-in';
+
+        // Language toggle — switch to same chapter in other language
+        const langEl = document.getElementById('chapter-lang');
+        langEl.innerHTML = `<a href="#${L.otherLang}/${file}">${L.langToggleLabel}</a>`;
 
         chapterEl.style.display = 'block';
 

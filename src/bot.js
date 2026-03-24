@@ -64,11 +64,14 @@ function createBot(token, webappUrl) {
     const ui = locales[lang].ui;
     const otherLang = lang === 'en' ? 'ua' : 'en';
     const otherUi = locales[otherLang].ui;
+    const buttons = [];
+    if (webappUrl) {
+      buttons.push([Markup.button.webApp(ui.jungForewordButton, `${webappUrl}?file=${lang}/00-foreword-jung`)]);
+    }
+    buttons.push([Markup.button.callback(otherUi.langSwitchLabel, `lang:${otherLang}`)]);
     ctx.reply(ui.startMessage, {
       parse_mode: 'HTML',
-      ...Markup.inlineKeyboard([
-        Markup.button.callback(otherUi.langSwitchLabel, `lang:${otherLang}`),
-      ]),
+      ...Markup.inlineKeyboard(buttons),
     });
   });
 
@@ -103,12 +106,15 @@ function createBot(token, webappUrl) {
       const ui = locales[lang].ui;
       const otherLang = lang === 'en' ? 'ua' : 'en';
       const otherUi = locales[otherLang].ui;
+      const buttons = [];
+      if (webappUrl) {
+        buttons.push([Markup.button.webApp(ui.jungForewordButton, `${webappUrl}?file=${lang}/00-foreword-jung`)]);
+      }
+      buttons.push([Markup.button.callback(otherUi.langSwitchLabel, `lang:${otherLang}`)]);
       ctx.answerCbQuery(ui.langSet);
       ctx.editMessageText(ui.startMessage, {
         parse_mode: 'HTML',
-        ...Markup.inlineKeyboard([
-          Markup.button.callback(otherUi.langSwitchLabel, `lang:${otherLang}`),
-        ]),
+        ...Markup.inlineKeyboard(buttons),
       });
     });
   }

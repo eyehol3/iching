@@ -53,7 +53,9 @@ const locales = {
         '4. Send me all six numbers as one string\n\n' +
         '<i>Example:</i> <code>789678</code> (bottom line first)\n\n' +
         'Each digit will be 6, 7, 8, or 9.\n' +
-        'Use /how_to for the full guide.',
+        'Use /how_to for the full guide.\n\n' +
+        'I highly recommend reading Carl Jung\'s foreword!',
+      jungForewordButton: '📖 Jung\'s Foreword',
       invalidInput:
         'That doesn\'t look like a coin toss result.\n\n' +
         'Send exactly 6 digits, each 6–9 (bottom line first).\n' +
@@ -120,7 +122,9 @@ const locales = {
         '4. Надішліть мені всі шість цифр одним рядком\n\n' +
         '<i>Приклад:</i> <code>789678</code> (нижня лінія першою)\n\n' +
         'Кожна цифра буде 6, 7, 8 або 9.\n' +
-        'Використайте /how_to для повної інструкції.',
+        'Використайте /how_to для повної інструкції.\n\n' +
+        'Дуже рекомендую прочитати вступ Карла Юнга!',
+      jungForewordButton: '📖 Вступ Юнга',
       invalidInput:
         'Це не схоже на результат кидання монет.\n\n' +
         'Надішліть рівно 6 цифр, кожна 6–9 (нижня лінія першою).\n' +

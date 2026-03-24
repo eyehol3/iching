@@ -814,8 +814,10 @@
       }
 
       // Switch language if needed
+      let langChanged = false;
       if (lang !== currentLang) {
         setLang(lang);
+        langChanged = true;
       }
 
       const file = parsed.file;
@@ -827,7 +829,7 @@
       }
 
       if (currentKnownFiles.has(file)) {
-        if (file !== currentFile) {
+        if (file !== currentFile || langChanged) {
           currentFile = file;
           renderChapter(file);
         }

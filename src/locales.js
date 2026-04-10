@@ -30,8 +30,8 @@ const locales = {
       '001': { name: 'Kên',    attribute: 'Keeping Still, Mountain' },
       '000': { name: "K'un",   attribute: 'The Receptive, Earth' },
       '011': { name: 'Sun',    attribute: 'The Gentle, Wind' },
-      '110': { name: 'Li',     attribute: 'The Clinging, Fire' },
-      '101': { name: 'Tui',    attribute: 'The Joyous, Lake' },
+      '101': { name: 'Li',     attribute: 'The Clinging, Fire' },
+      '110': { name: 'Tui',    attribute: 'The Joyous, Lake' },
     },
 
     // ── Renderer ──
@@ -99,8 +99,8 @@ const locales = {
       '001': { name: 'Кень',  attribute: 'Непорушне, Гора' },
       '000': { name: 'Кунь',  attribute: 'Сприймальне, Земля' },
       '011': { name: 'Сунь',  attribute: 'Лагідне, Вітер' },
-      '110': { name: 'Лі',    attribute: 'Чіпке, Вогонь' },
-      '101': { name: 'Туй',   attribute: 'Радісне, Озеро' },
+      '101': { name: 'Лі',    attribute: 'Чіпке, Вогонь' },
+      '110': { name: 'Туй',   attribute: 'Радісне, Озеро' },
     },
 
     // ── Renderer ──
